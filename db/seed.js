@@ -42,8 +42,6 @@ async function rebuildDB() {
         await createTables();
     } catch (error) {
         console.error(error);
-    } finally {
-        client.end();
     }
 }
 
@@ -51,7 +49,7 @@ async function rebuildDB() {
 
 async function testDB() {
     try {
-        console.log("Startçing to test database...");
+        console.log("Starting to test database...");
        
 
         const users = await getAllUsers();
