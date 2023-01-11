@@ -5,18 +5,31 @@ const {
 
 async function dropTables() {
     try {
+        console.log("Starting to drop tables...");
+
         await client.query(`
+            DROP TABLE IF EXISTS users;
         `);
+        console.log("Finished dropping tables!");
     } catch (error) {
+        console.error("Error dropping tables!");
         throw error;
     }
 }
 
 async function createTables() {
     try {
+        console.log("Starting to build tables...");
         await client.query(`
+            CREATE TABLE users (
+                id SERIAL PRIMARY KEY,
+                username varchar(255) UNIQUE NOT NULL,
+                password varchar(255) NOT NULL
+            );
         `);
+        console.log("Finished building tables!");
     } catch (error) {
+        console.error("Error building tables!");
         throw error;
     }
 }
@@ -34,19 +47,27 @@ async function rebuildDB() {
     }
 }
 
-rebuildDB();
 
-//async function testDB() {
-//     try {
-//         client.connect();
 
-//         const users = await getAllUsers();
-//         console.log(users);
-//     } catch (error) {
-//         console.error(error);
-//     } finally {
-//         client.end();
-//     }
-// }
+async function testDB() {
+    try {
+        console.log("Startçing to test database...");
+       
 
-// testDB();
+        const users = await getAllUsers();
+        console.log("getAllUsers:", users);
+
+        console.log("Finished database tests!");
+    } catch (error) {
+        console.error("Error testing database!");
+        throw error;
+   
+    }
+}
+
+
+
+rebuildDB()
+    .then(testDB)
+    .catch(console.error)
+    .finally(() => client.end());
