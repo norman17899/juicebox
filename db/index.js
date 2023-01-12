@@ -53,6 +53,26 @@ async function getAllUsers() {
     return rows;
 }
 
+async function getUserById(userId) {
+    try {
+        const { rows: [ user ] } = await client.query(`
+        SELECT id, username, name, location, active
+        FROM users
+        WHERE  id=${ userId }
+        `);
+
+        if (!user) {
+            return null
+        }
+
+        user.posts = await getPostsByUser(userId);
+
+        return user;
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function createPost({
     authorId,
     title,
@@ -60,9 +80,9 @@ async function createPost({
 }) {
     try {
         const { rows: [ post ]} = await client.query(`
-        INSERT INTO posts("authorId", title, content
+        INSERT INTO posts("authorId", title, content)
         VALUES ($1, $2, $3)
-        RETURNING *;)
+        RETURNING *;
         `, [authorId, title, content]);
 
         return post;
@@ -107,9 +127,28 @@ async function getAllPosts() {
     }
 }
 
+async function getPostsByUser(userId) {
+    try {
+        const { rows } = await client.query(`
+        SELECT *
+        FROM posts
+        WHERE "authorId"=${ userId };
+        `);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     client,
-    getAllUsers,
     createUser,
     updateUser,
+    getAllUsers,
+    getUserById,
+    createPost,
+    updatePost,
+    getAllPosts,
+    getPostsByUser
+
 }
