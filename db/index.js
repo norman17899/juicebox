@@ -176,15 +176,11 @@ async function createTags(tagList) {
       return; 
     }
   
-    // need something like: $1), ($2), ($3 
     const insertValues = tagList.map(
       (_, index) => `$${index + 1}`).join('), (');
-    // then we can use: (${ insertValues }) in our string template
 
-    // need something like $1, $2, $3
     const selectValues = tagList.map(
       (_, index) => `$${index + 1}`).join(', ');
-    // then we can use (${ selectValues }) in our string template
         
     try {
         await client.query(`
